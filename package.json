@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "start coverage/lcov-report/index.html||open coverage/lcov-report/index.html||xdg-open coverage/lcov-report/index.html"
   },
   "dependencies": {
     "@types/node": "18.15.8",
@@ -18,7 +19,13 @@
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.0.2"
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.30.0",
+    "sequelize-typescript": "^2.1.5",
+    "sqlite3": "^5.1.6",
+    "typedi": "^0.10.0",
+    "typescript": "5.0.2",
+    "winston": "^3.8.2"
   },
   "engines": {
     "node": "18.15.x"
