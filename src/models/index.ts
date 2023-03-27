@@ -1,12 +1,12 @@
 import { ModelStatic } from 'sequelize';
 import { ModelCtor } from 'sequelize-typescript';
 
-import { Entry } from './Entry';
+import { User } from './User';
 
-export { Entry };
+export type { User };
 
 export interface Models {
-  Entry: ModelStatic<Entry>;
+  User: ModelStatic<User> & typeof User;
 }
 
-export const models = [Entry] as ModelCtor[];
+export const models = [User] as ModelCtor[];

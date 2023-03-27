@@ -23,6 +23,7 @@
     "sequelize": "^6.30.0",
     "sequelize-typescript": "^2.1.5",
     "sqlite3": "^5.1.6",
+    "string-to-color": "^2.2.2",
     "typedi": "^0.10.0",
     "typescript": "5.0.2",
     "winston": "^3.8.2"
