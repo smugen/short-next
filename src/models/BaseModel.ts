@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import GraphNode from '@/graphql/types/GraphNode';
 import type {
   CreationOptional,
   InferAttributes,
@@ -14,6 +15,7 @@ import {
   PrimaryKey,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { Field, ID, InterfaceType } from 'type-graphql';
 
 interface IModel {
   readonly id: CreationOptional<string>;
@@ -22,6 +24,7 @@ interface IModel {
   readonly deletedAt?: Date | null;
 }
 
+@InterfaceType('DaoNode', { implements: GraphNode })
 export default abstract class BaseModel<M extends Model = Model>
   extends Model<
     InferAttributes<M & IModel>,
@@ -33,6 +36,7 @@ export default abstract class BaseModel<M extends Model = Model>
     return this.toJSON();
   }
 
+  @Field(() => ID)
   @PrimaryKey
   @Column({
     primaryKey: true,
@@ -41,12 +45,24 @@ export default abstract class BaseModel<M extends Model = Model>
   })
   readonly id!: CreationOptional<string>;
 
+  @Field(() => Date, {
+    description: 'The DAO created at.',
+    nullable: true,
+  })
   @CreatedAt
   readonly createdAt?: Date | null;
 
+  @Field(() => Date, {
+    description: 'The DAO updated at.',
+    nullable: true,
+  })
   @UpdatedAt
   readonly updatedAt?: Date | null;
 
+  @Field(() => Date, {
+    description: 'The DAO deleted at.',
+    nullable: true,
+  })
   @DeletedAt
   readonly deletedAt?: Date | null;
 }

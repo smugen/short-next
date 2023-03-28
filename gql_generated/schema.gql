@@ -1,0 +1,38 @@
+schema {
+  query: Query
+}
+
+interface DaoNode implements Node {
+  """The DAO created at."""
+  createdAt: DateTime
+  """The DAO deleted at."""
+  deletedAt: DateTime
+  id: ID!
+  """The DAO updated at."""
+  updatedAt: DateTime
+}
+
+"""The javascript `Date` as string. Type represents date and time as the ISO Date string."""
+scalar DateTime
+
+interface Node {
+  id: ID!
+}
+
+type Query {
+  hello: String!
+}
+
+type User implements DaoNode & Node @key(fields: "id") {
+  """The DAO created at."""
+  createdAt: DateTime
+  """The DAO deleted at."""
+  deletedAt: DateTime
+  id: ID!
+  """The User name for display"""
+  name: String!
+  """The DAO updated at."""
+  updatedAt: DateTime
+  """The User username"""
+  username: String!
+}

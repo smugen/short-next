@@ -2,6 +2,7 @@ import assert from 'assert';
 import crypto from 'crypto';
 import { promisify } from 'util';
 
+import GraphNode from '@/graphql/types/GraphNode';
 import logger from '@/logger';
 import { DataTypes } from 'sequelize';
 import {
@@ -11,6 +12,7 @@ import {
   Index,
   Table,
 } from 'sequelize-typescript';
+import { Directive, Field, ObjectType } from 'type-graphql';
 
 import BaseModel from './BaseModel';
 
@@ -30,6 +32,8 @@ let verifyCallCount = 0;
  */
 let verifyAvgTime = 0;
 
+@Directive(`@key(fields: "id")`)
+@ObjectType({ implements: [GraphNode, BaseModel] })
 @Table<User>({})
 export class User extends BaseModel<User> implements ScryptPassword {
   toJSON() {
@@ -44,6 +48,9 @@ export class User extends BaseModel<User> implements ScryptPassword {
   }
 
   /** name for display */
+  @Field({
+    description: 'The User name for display',
+  })
   @Index
   @AllowNull(false)
   @Column(DataTypes.STRING)
@@ -55,6 +62,9 @@ export class User extends BaseModel<User> implements ScryptPassword {
   }
 
   /** username used for login */
+  @Field({
+    description: 'The User username',
+  })
   @Index({ unique: true, type: 'UNIQUE' })
   @AllowNull(false)
   @Column({
