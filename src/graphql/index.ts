@@ -14,21 +14,20 @@ import SampleResolver from './resolvers/SampleResolver';
 cv.useContainer(Container);
 Container.set(cv.Validator, new cv.Validator());
 
-export default async function schemaFactory() {
-  const schema = await buildSchema({
+export default function schemaFactory() {
+  return buildSchema({
     resolvers: [SampleResolver],
     orphanedTypes: [User],
     dateScalarMode: 'isoDate',
     container: Container,
   });
+}
 
-  'production' !== process.env.NODE_ENV &&
-    (await writeSchemaWithDirectives(
-      resolve(process.cwd(), './gql_generated/schema.gql'),
-      schema,
-    ));
-
-  return schema;
+export async function writeSchemaFile() {
+  await writeSchemaWithDirectives(
+    resolve(process.cwd(), './gql_generated/schema.gql'),
+    await schemaFactory(),
+  );
 }
 
 async function writeSchemaWithDirectives(
