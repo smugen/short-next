@@ -2,6 +2,7 @@ import type { User } from '@/models';
 import SequelizeDatabase from '@/services/SequelizeDatabase';
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import { Sequelize } from 'sequelize-typescript';
+
 const db = new SequelizeDatabase();
 
 beforeAll(async () => {
@@ -15,9 +16,7 @@ beforeAll(async () => {
     : (process.env.NO_LOG_META = NO_LOG_META);
 });
 
-afterAll(async () => {
-  await db.sequelize.close();
-});
+afterAll(() => db.sequelize.close());
 
 describe('SequelizeDatabase', () => {
   describe('#sequelize', () => {

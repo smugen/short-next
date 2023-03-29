@@ -4,6 +4,7 @@ import { promisify } from 'util';
 
 import GraphNode from '@/graphql/types/GraphNode';
 import logger from '@/logger';
+import type { CreationOptional } from 'sequelize';
 import { DataTypes } from 'sequelize';
 import {
   AllowNull,
@@ -48,13 +49,13 @@ export class User extends BaseModel<User> implements ScryptPassword {
   }
 
   /** name for display */
-  @Field({
+  @Field(() => String, {
     description: 'The User name for display',
   })
   @Index
   @AllowNull(false)
   @Column(DataTypes.STRING)
-  name!: string;
+  name!: CreationOptional<string>;
 
   @BeforeValidate
   static defaultNameFromUsername(user: User) {
@@ -62,7 +63,7 @@ export class User extends BaseModel<User> implements ScryptPassword {
   }
 
   /** username used for login */
-  @Field({
+  @Field(() => String, {
     description: 'The User username',
   })
   @Index({ unique: true, type: 'UNIQUE' })
@@ -78,11 +79,11 @@ export class User extends BaseModel<User> implements ScryptPassword {
 
   @AllowNull(false)
   @Column(DataTypes.STRING(SALT_LEN).BINARY)
-  salt!: Buffer;
+  salt!: CreationOptional<Buffer>;
 
   @AllowNull(false)
   @Column(DataTypes.STRING(KEY_LEN).BINARY)
-  derivedKey!: Buffer;
+  derivedKey!: CreationOptional<Buffer>;
 
   async setPassword(password: string): Promise<this> {
     const { salt, derivedKey } = await hashPswd(password);
@@ -137,7 +138,7 @@ export class User extends BaseModel<User> implements ScryptPassword {
     logger.debug('User.verify', {
       verifyAvgTime,
       verifyCallCount,
-      module: module.filename,
+      module: module.id,
     });
 
     return ok ? user : null;

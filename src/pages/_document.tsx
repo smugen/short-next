@@ -1,8 +1,4 @@
-import { writeSchemaFile } from '@/graphql';
-import { generate } from '@graphql-codegen/cli';
 import { Head, Html, Main, NextScript } from 'next/document';
-
-import config from '../../codegen';
 
 export default function Document() {
   return (
@@ -15,8 +11,3 @@ export default function Document() {
     </Html>
   );
 }
-
-(async function setup() {
-  await writeSchemaFile();
-  await generate(config, true);
-})();

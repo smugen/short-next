@@ -1,6 +1,8 @@
 import schemaFactory from '@/graphql';
+import type { ServerContext, UserContext } from '@/graphql';
+import UserService from '@/services/UserService';
 import { createYoga } from 'graphql-yoga';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import Container from 'typedi';
 
 export const config = {
   api: {
@@ -9,11 +11,18 @@ export const config = {
   },
 };
 
-export default createYoga<{
-  req: NextApiRequest;
-  res: NextApiResponse;
-}>({
+export default createYoga<ServerContext, UserContext>({
   schema: schemaFactory(),
   // Needed to be defined explicitly because our endpoint lives at a different path other than `/graphql`
   graphqlEndpoint: '/api/graphql',
+
+  async context({ req }) {
+    const userService = Container.get(UserService);
+    const user = await userService.authenticate(req);
+    return { user };
+  },
+
+  // graphiql: {
+  //   credentials: 'same-origin',
+  // },
 });

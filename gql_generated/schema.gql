@@ -1,5 +1,22 @@
 schema {
   query: Query
+  mutation: Mutation
+}
+
+input AddUserInput {
+  """Specify name for the User."""
+  name: String
+  """Password for the User."""
+  password: String!
+  """Email address as username for the User."""
+  username: EmailAddress!
+}
+
+type AddUserOutput {
+  """The password of the User."""
+  password: String!
+  """The User object."""
+  user: User!
 }
 
 interface DaoNode implements Node {
@@ -15,12 +32,42 @@ interface DaoNode implements Node {
 """The javascript `Date` as string. Type represents date and time as the ISO Date string."""
 scalar DateTime
 
+"""A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address."""
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+
+type Mutation {
+  """Add a new User."""
+  addUser(input: AddUserInput!): AddUserOutput!
+  """User sign-in."""
+  signIn(input: SignInInput!): SignInOutput!
+  """User sign-out."""
+  signOut: Void
+}
+
 interface Node {
   id: ID!
 }
 
 type Query {
-  hello: String!
+  """Who am I?"""
+  me(
+    """User token take precedence of Authorization header and Cookie."""
+    token: String
+  ): User
+}
+
+input SignInInput {
+  """Password for the User."""
+  password: String!
+  """Email address as username for the User."""
+  username: EmailAddress!
+}
+
+type SignInOutput {
+  """The token of this session."""
+  cyToken: String!
+  """The User object."""
+  user: User!
 }
 
 type User implements DaoNode & Node @key(fields: "id") {
@@ -36,3 +83,6 @@ type User implements DaoNode & Node @key(fields: "id") {
   """The User username"""
   username: String!
 }
+
+"""Represents NULL values"""
+scalar Void

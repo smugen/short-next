@@ -1,11 +1,5 @@
 import 'reflect-metadata';
 
-import { writeSchemaFile } from '@/graphql';
-import { generate } from '@graphql-codegen/cli';
+import schemaFactory, { setup } from '@/graphql';
 
-import config from './codegen';
-
-module.exports = async function setup() {
-  await writeSchemaFile();
-  await generate(config, true);
-};
+module.exports = async () => await setup(await schemaFactory());
