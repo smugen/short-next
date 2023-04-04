@@ -23,7 +23,7 @@ tags: HR
 - [ ] 整個 React App 使用 [Functional Component](https://reactjs.org/docs/components-and-props.html#function-and-class-components)
 - [x] 使用套件檢查程式碼風格 (例如：[JavaScript Standard](https://standardjs.com/)、[ESLint](https://eslint.org/))
 - [ ] 專案需要能被公開瀏覽使用 (例如使用 [Heroku](https://www.heroku.com/))
-- [ ] [單元測試](https://en.wikipedia.org/wiki/Unit_testing)
+- [x] [單元測試](https://en.wikipedia.org/wiki/Unit_testing)
 - [ ] [E2E 測試](https://www.browserstack.com/guide/end-to-end-testing)
 - [x] 開發時全程使用 [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
 - [ ] 整合 [CI/CD](https://en.wikipedia.org/wiki/CI/CD) 流程
@@ -31,7 +31,9 @@ tags: HR
 ## 需挑選以下==至少兩項==功能實作
 
 - [ ] 需要驗證網址有效
-- [ ] 使用者可以使用密碼註冊、登入、登出
+- [x] 使用者可以使用密碼註冊、登入、登出
+  - [x] BE: 使用 [Scrypt](https://en.wikipedia.org/wiki/Scrypt) 儲存密碼，且使用 [JWT](https://jwt.io/) 產生 token
+  - [x] FE: 註冊、登入，TODO: 登出
 - [ ] 使用者可以新增、建立、更新、刪除多個短網址
 - [ ] 短網址重新導向的過程使用快取 (可暫時避免向資料庫查詢)
 - [ ] 使用者可以知道短網址瀏覽次數

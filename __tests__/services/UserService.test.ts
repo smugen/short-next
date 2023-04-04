@@ -78,6 +78,7 @@ describe('UserService', () => {
         UserService.TOKEN_COOKIE_NAME,
         expect.any(String),
         {
+          path: '/',
           httpOnly: true,
           maxAge: UserService.TOKEN_EXPIRES_IN,
           secure: true,
@@ -92,6 +93,7 @@ describe('UserService', () => {
         UserService.TOKEN_COOKIE_NAME,
         expect.any(String),
         {
+          path: '/',
           httpOnly: true,
           maxAge: UserService.TOKEN_EXPIRES_IN,
           secure: undefined,
@@ -156,6 +158,7 @@ describe('UserService', () => {
       expect(cookie.serialize).toHaveBeenLastCalledWith(
         UserService.TOKEN_COOKIE_NAME,
         '',
+        { path: '/' },
       );
       expect(setHeader).toHaveBeenLastCalledWith('Set-Cookie', symbol);
     });

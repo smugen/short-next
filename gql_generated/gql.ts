@@ -17,6 +17,9 @@ const documents = {
     "\n      mutation signIn_test($input: SignInInput!) {\n        signIn(input: $input) {\n          cyToken\n          user {\n            id\n            username\n          }\n        }\n      }\n    ": types.SignIn_TestDocument,
     "\n      query me_test($token: String) {\n        me(token: $token) {\n          id\n          username\n        }\n      }\n    ": types.Me_TestDocument,
     "\n      mutation signOut_test {\n        signOut\n      }\n    ": types.SignOut_TestDocument,
+    "\n  mutation addUser($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        username\n      }\n    }\n  }\n": types.AddUserDocument,
+    "\n  mutation signIn($input: SignInInput!) {\n    signIn(input: $input) {\n      user {\n        id\n        name\n        username\n        createdAt\n        updatedAt\n      }\n    }\n  }\n": types.SignInDocument,
+    "\n  mutation signOut {\n    signOut\n  }\n": types.SignOutDocument,
 };
 
 /**
@@ -49,6 +52,18 @@ export function graphql(source: "\n      query me_test($token: String) {\n      
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n      mutation signOut_test {\n        signOut\n      }\n    "): (typeof documents)["\n      mutation signOut_test {\n        signOut\n      }\n    "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation addUser($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        username\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation addUser($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        username\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation signIn($input: SignInInput!) {\n    signIn(input: $input) {\n      user {\n        id\n        name\n        username\n        createdAt\n        updatedAt\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation signIn($input: SignInInput!) {\n    signIn(input: $input) {\n      user {\n        id\n        name\n        username\n        createdAt\n        updatedAt\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation signOut {\n    signOut\n  }\n"): (typeof documents)["\n  mutation signOut {\n    signOut\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -2,6 +2,7 @@ import assert from 'assert';
 import type { TLSSocket } from 'tls';
 import { promisify } from 'util';
 
+import SequelizeValidationError from '@/graphql/resolvers/errors/SequelizeValidationError';
 import SignInError from '@/graphql/resolvers/errors/SignInError';
 import type AddUserInput from '@/graphql/resolvers/inputs/AddUserInput';
 import type SignInInput from '@/graphql/resolvers/inputs/SignInInput';
@@ -11,7 +12,12 @@ import logger from '@/logger';
 import type { User } from '@/models';
 import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
+import { ValidationError } from 'sequelize';
 import { Inject, Service } from 'typedi';
 
 import SequelizeDatabase from './SequelizeDatabase';
@@ -27,9 +33,12 @@ const jwtVerify = promisify<
 >(jwt.verify);
 
 const TOKEN_COOKIE_NAME = 'CYToken';
+const path = '/';
 /** 8 hours in seconds */
 const TOKEN_EXPIRES_IN = 28800;
 const TOKEN_TYPE = 'Bearer';
+
+type NextReq = GetServerSidePropsContext['req'] | NextApiRequest;
 
 @Service()
 export default class UserService {
@@ -41,9 +50,7 @@ export default class UserService {
     private readonly db: SequelizeDatabase,
   ) {}
 
-  async authenticate(
-    reqOrToken: NextApiRequest | string,
-  ): Promise<User | undefined> {
+  async authenticate(reqOrToken: NextReq | string): Promise<User | undefined> {
     const TAG = 'authenticate';
     const token =
       typeof reqOrToken === 'string' ? reqOrToken : getToken(reqOrToken);
@@ -101,6 +108,7 @@ export default class UserService {
     res?.setHeader(
       'Set-Cookie',
       serialize(TOKEN_COOKIE_NAME, cyToken, {
+        path,
         httpOnly: true,
         maxAge: TOKEN_EXPIRES_IN,
         secure: (req?.socket as TLSSocket).encrypted,
@@ -112,7 +120,7 @@ export default class UserService {
   }
 
   signOut(res?: NextApiResponse) {
-    res?.setHeader('Set-Cookie', serialize(TOKEN_COOKIE_NAME, ''));
+    res?.setHeader('Set-Cookie', serialize(TOKEN_COOKIE_NAME, '', { path }));
   }
 
   async addUser({
@@ -120,10 +128,22 @@ export default class UserService {
     username,
     password,
   }: AddUserInput): Promise<AddUserOutput> {
-    const user = await (
-      await this.db.UserModel.build({ name, username }).setPassword(password)
-    ).save();
-    return { user, password };
+    try {
+      let user = await this.db.UserModel.build({
+        name,
+        username,
+      }).setPassword(password);
+
+      user = await(user).save();
+
+      return { user, password };
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw new SequelizeValidationError(error);
+      }
+      logger.error('addUser', { error, module: module.id });
+      throw error;
+    }
   }
 }
 
@@ -150,7 +170,7 @@ class TokenClaims {
   }
 }
 
-function getToken(req: NextApiRequest): string | undefined {
+function getToken(req: NextReq): string | undefined {
   const [type, token] = req.headers.authorization?.split(' ') ?? [];
   if (type === TOKEN_TYPE && token && typeof token === 'string') {
     return token;

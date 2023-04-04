@@ -12,7 +12,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { buildSchema } from 'type-graphql';
 import Container from 'typedi';
 
-import config from './codegen';
+import config from '../../codegen';
 import UserResolver from './resolvers/UserResolver';
 
 export type GraphqlContext = YogaInitialContext & ServerContext & UserContext;

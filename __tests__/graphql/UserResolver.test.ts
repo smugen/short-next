@@ -60,6 +60,30 @@ describe('UserResolver', () => {
       assert(user?.id);
       id = user?.id;
     });
+
+    it('should not add a user with duplicate username', async () => {
+      const { data, errors } = await executor({
+        document: addUser,
+        variables: { input: { name, username, password } },
+      });
+
+      expect(data?.addUser).toBeUndefined();
+      expect(errors).toHaveLength(1);
+      expect(errors?.[0]).toMatchInlineSnapshot(`
+        {
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "username must be unique",
+          "path": [
+            "addUser",
+          ],
+        }
+      `);
+    });
   });
 
   describe('#signIn', () => {

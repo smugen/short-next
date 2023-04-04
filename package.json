@@ -8,9 +8,16 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "coverage": "start coverage/lcov-report/index.html||open coverage/lcov-report/index.html||xdg-open coverage/lcov-report/index.html"
+    "coverage": "start coverage/lcov-report/index.html||open coverage/lcov-report/index.html||xdg-open coverage/lcov-report/index.html",
+    "codegen": "graphql-codegen",
+    "codegen:watch": "graphql-codegen --watch"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.15",
     "@types/node": "18.15.8",
     "@types/react": "18.0.29",
     "@types/react-dom": "18.0.11",
@@ -23,6 +30,7 @@
     "graphql-yoga": "^3.7.3",
     "jsonwebtoken": "^9.0.0",
     "next": "13.2.4",
+    "next-superjson": "^0.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "reflect-metadata": "^0.1.13",
@@ -30,9 +38,11 @@
     "sequelize-typescript": "^2.1.5",
     "sqlite3": "^5.1.6",
     "string-to-color": "^2.2.2",
+    "superjson": "^1.12.2",
     "type-graphql": "^1.1.1",
     "typedi": "^0.10.0",
-    "typescript": "5.0.2",
+    "typescript": "^5.0.2",
+    "urql": "^4.0.0",
     "winston": "^3.8.2"
   },
   "engines": {
