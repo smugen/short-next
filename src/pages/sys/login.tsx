@@ -153,7 +153,7 @@ function SignIn({ dispatch, username, password }: LoginProps) {
   return (
     <>
       <Typography component="h1" variant="h5">
-        Sign in
+        Sign In
       </Typography>
       <Box
         component="form"
@@ -241,7 +241,7 @@ function SignUp({ dispatch, username, password }: LoginProps) {
   return (
     <>
       <Typography component="h1" variant="h5">
-        Sign up
+        Sign Up
       </Typography>
       <Box
         component="form"
@@ -293,7 +293,7 @@ function SignUp({ dispatch, username, password }: LoginProps) {
           variant="body2"
           onClick={toSignIn}
         >
-          Already have an account? Sign in
+          Already have an account? Sign In
         </Link>
       </Box>
     </>
