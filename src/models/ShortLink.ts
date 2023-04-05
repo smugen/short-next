@@ -9,11 +9,13 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
+  HasMany,
   Index,
   Table,
 } from 'sequelize-typescript';
 
 import BaseModel from './BaseModel';
+import { ShortLinkView } from './ShortLinkView';
 import { User } from './User';
 
 const randomBytes = promisify(crypto.randomBytes);
@@ -45,6 +47,10 @@ export class ShortLink extends BaseModel<ShortLink> {
   /** user */
   @BelongsTo(() => User)
   user?: User;
+
+  /** views */
+  @HasMany(() => ShortLinkView, 'shortLinkId')
+  views?: ShortLinkView[];
 }
 
 async function genSlug(M: typeof ShortLink, lenFactor = 1): Promise<string> {

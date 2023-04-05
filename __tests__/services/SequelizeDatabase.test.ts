@@ -36,6 +36,10 @@ describe('SequelizeDatabase', () => {
       expect(db.models.ShortLink).toBeDefined();
       expect(db.ShortLinkModel).toBeDefined();
       expect(db.ShortLinkModel).toBe(db.models.ShortLink);
+
+      expect(db.models.ShortLinkView).toBeDefined();
+      expect(db.ShortLinkViewModel).toBeDefined();
+      expect(db.ShortLinkViewModel).toBe(db.models.ShortLinkView);
     });
   });
 
@@ -160,6 +164,49 @@ describe('SequelizeDatabase', () => {
       expect(shortLink?.slug).toBe(slug);
       expect(shortLink?.fullLink).toBe(fullLink);
       expect(shortLink?.userId).toBe(userId);
+    });
+  });
+
+  describe('#ShortLinkViewModel', () => {
+    const { ShortLinkView, ShortLink, User } = db.models;
+    let shortLinkId: string;
+
+    beforeAll(async () => {
+      const user = await (
+        await User.build({
+          username: `${crypto.randomUUID()}@example.com`,
+        }).setPassword('password')
+      ).save();
+
+      const shortLink = await ShortLink.create({
+        userId: user.id,
+        fullLink: 'https://example.com',
+      });
+
+      shortLinkId = shortLink.id;
+    });
+
+    it('should be able to save a short link view', async () => {
+      const shortLinkView = await ShortLinkView.create({ shortLinkId });
+
+      expect(shortLinkView).toBeInstanceOf(ShortLinkView);
+      expect(shortLinkView.id).toStrictEqual(expect.any(String));
+      expect(shortLinkView.shortLinkId).toBe(shortLinkId);
+    });
+
+    it('should count short link views of a short link', async () => {
+      let shortLinkViewCount = await ShortLinkView.count({
+        where: { shortLinkId },
+      });
+
+      expect(shortLinkViewCount).toBe(1);
+
+      await ShortLinkView.create({ shortLinkId });
+      shortLinkViewCount = await ShortLinkView.count({
+        where: { shortLinkId },
+      });
+
+      expect(shortLinkViewCount).toBe(2);
     });
   });
 });
