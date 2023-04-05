@@ -10,12 +10,14 @@ import {
   AllowNull,
   BeforeValidate,
   Column,
+  HasMany,
   Index,
   Table,
 } from 'sequelize-typescript';
 import { Directive, Field, ObjectType } from 'type-graphql';
 
 import BaseModel from './BaseModel';
+import { ShortLink } from './ShortLink';
 
 const randomBytes = promisify(crypto.randomBytes);
 const scrypt = promisify(crypto.scrypt);
@@ -143,6 +145,9 @@ export class User extends BaseModel<User> implements ScryptPassword {
 
     return ok ? user : null;
   }
+
+  @HasMany(() => ShortLink, 'userId')
+  shortLinks?: ShortLink[];
 }
 
 interface ScryptPassword {

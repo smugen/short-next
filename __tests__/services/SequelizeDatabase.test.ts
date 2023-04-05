@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import type { User } from '@/models';
 import SequelizeDatabase from '@/services/SequelizeDatabase';
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
@@ -30,6 +32,10 @@ describe('SequelizeDatabase', () => {
       expect(db.models.User).toBeDefined();
       expect(db.UserModel).toBeDefined();
       expect(db.UserModel).toBe(db.models.User);
+
+      expect(db.models.ShortLink).toBeDefined();
+      expect(db.ShortLinkModel).toBeDefined();
+      expect(db.ShortLinkModel).toBe(db.models.ShortLink);
     });
   });
 
@@ -104,6 +110,56 @@ describe('SequelizeDatabase', () => {
       await expect(newUser.save()).rejects.toMatchInlineSnapshot(
         `[SequelizeUniqueConstraintError: Validation error]`,
       );
+    });
+  });
+
+  describe('#ShortLinkModel', () => {
+    const { ShortLink, User } = db.models;
+    let userId: string;
+    let shortLinkId: string;
+    let slug: string;
+    const fullLink = 'https://example.com';
+
+    beforeAll(async () => {
+      const user = await (
+        await User.build({
+          username: `${crypto.randomUUID()}@example.com`,
+        }).setPassword('password')
+      ).save();
+      userId = user.id;
+    });
+
+    it('should be able to save a short link with default slug', async () => {
+      const shortLink = await ShortLink.create({ userId, fullLink });
+
+      expect(shortLink).toBeInstanceOf(ShortLink);
+      expect(shortLink.id).toStrictEqual(expect.any(String));
+      expect(shortLink.slug).toStrictEqual(expect.any(String));
+      expect(shortLink.fullLink).toBe(fullLink);
+      expect(shortLink.userId).toBe(userId);
+
+      shortLinkId = shortLink.id;
+      slug = shortLink.slug;
+    });
+
+    it('should find a short link by slug', async () => {
+      const shortLink = await ShortLink.findOne({ where: { slug } });
+
+      expect(shortLink).toBeInstanceOf(ShortLink);
+      expect(shortLink?.id).toBe(shortLinkId);
+      expect(shortLink?.slug).toBe(slug);
+      expect(shortLink?.fullLink).toBe(fullLink);
+      expect(shortLink?.userId).toBe(userId);
+    });
+
+    it('should find a short link by userId', async () => {
+      const shortLink = await ShortLink.findOne({ where: { userId } });
+
+      expect(shortLink).toBeInstanceOf(ShortLink);
+      expect(shortLink?.id).toBe(shortLinkId);
+      expect(shortLink?.slug).toBe(slug);
+      expect(shortLink?.fullLink).toBe(fullLink);
+      expect(shortLink?.userId).toBe(userId);
     });
   });
 });
