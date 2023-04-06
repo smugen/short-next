@@ -8,10 +8,10 @@ import {
 } from 'sequelize-typescript';
 
 import BaseModel from './BaseModel';
-import { ShortLink } from './ShortLink';
+import ShortLink from './ShortLink';
 
 @Table<ShortLinkView>({})
-export class ShortLinkView extends BaseModel<ShortLinkView> {
+export default class ShortLinkView extends BaseModel<ShortLinkView> {
   /** shortLink id */
   @ForeignKey(() => ShortLink)
   @AllowNull(false)

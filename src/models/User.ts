@@ -17,7 +17,7 @@ import {
 import { Directive, Field, ObjectType } from 'type-graphql';
 
 import BaseModel from './BaseModel';
-import { ShortLink } from './ShortLink';
+import ShortLink from './ShortLink';
 
 const randomBytes = promisify(crypto.randomBytes);
 const scrypt = promisify(crypto.scrypt);
@@ -38,7 +38,7 @@ let verifyAvgTime = 0;
 @Directive(`@key(fields: "id")`)
 @ObjectType({ implements: [GraphNode, BaseModel] })
 @Table<User>({})
-export class User extends BaseModel<User> implements ScryptPassword {
+export default class User extends BaseModel<User> implements ScryptPassword {
   toJSON() {
     const { salt, derivedKey } = this;
     return {

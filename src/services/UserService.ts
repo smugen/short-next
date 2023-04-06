@@ -4,6 +4,7 @@ import { promisify } from 'util';
 
 import SequelizeValidationError from '@/graphql/resolvers/errors/SequelizeValidationError';
 import SignInError from '@/graphql/resolvers/errors/SignInError';
+import UserNotFoundError from '@/graphql/resolvers/errors/UserNotFoundError';
 import type AddUserInput from '@/graphql/resolvers/inputs/AddUserInput';
 import type SignInInput from '@/graphql/resolvers/inputs/SignInInput';
 import type AddUserOutput from '@/graphql/resolvers/outputs/AddUserOutput';
@@ -21,6 +22,7 @@ import { ValidationError } from 'sequelize';
 import { Inject, Service } from 'typedi';
 
 import SequelizeDatabase from './SequelizeDatabase';
+import UserLoader from './UserLoader';
 
 const jwtSign = promisify<object, Buffer, jwt.SignOptions, string | undefined>(
   jwt.sign,
@@ -48,6 +50,8 @@ export default class UserService {
   constructor(
     @Inject(() => SequelizeDatabase)
     private readonly db: SequelizeDatabase,
+    @Inject(() => UserLoader)
+    private readonly userLoader: UserLoader,
   ) {}
 
   async authenticate(reqOrToken: NextReq | string): Promise<User | undefined> {
@@ -134,7 +138,7 @@ export default class UserService {
         username,
       }).setPassword(password);
 
-      user = await(user).save();
+      user = await user.save();
 
       return { user, password };
     } catch (error) {
@@ -144,6 +148,14 @@ export default class UserService {
       logger.error('addUser', { error, module: module.id });
       throw error;
     }
+  }
+
+  async loadUserById(id: string): Promise<User> {
+    const user = await this.userLoader.load(id);
+    if (!user) {
+      throw new UserNotFoundError(id);
+    }
+    return user;
   }
 }
 

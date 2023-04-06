@@ -40,6 +40,10 @@ describe('SequelizeDatabase', () => {
       expect(db.models.ShortLinkView).toBeDefined();
       expect(db.ShortLinkViewModel).toBeDefined();
       expect(db.ShortLinkViewModel).toBe(db.models.ShortLinkView);
+
+      expect(db.models.ShortLinkMeta).toBeDefined();
+      expect(db.ShortLinkMetaModel).toBeDefined();
+      expect(db.ShortLinkMetaModel).toBe(db.models.ShortLinkMeta);
     });
   });
 
@@ -207,6 +211,69 @@ describe('SequelizeDatabase', () => {
       });
 
       expect(shortLinkViewCount).toBe(2);
+    });
+  });
+
+  describe('#ShortLinkMetaModel', () => {
+    const { ShortLinkMeta, ShortLink, User } = db.models;
+    let shortLinkId: string;
+    const tagName = 'TITLE';
+    const rawText = 'Example Title';
+    const content = 'meta content';
+    const property = 'meta property';
+    const name = 'meta name';
+
+    beforeAll(async () => {
+      const user = await (
+        await User.build({
+          username: `${crypto.randomUUID()}@example.com`,
+        }).setPassword('password')
+      ).save();
+
+      const shortLink = await ShortLink.create({
+        userId: user.id,
+        fullLink: 'https://example.com',
+      });
+
+      shortLinkId = shortLink.id;
+    });
+
+    it('should be able to save a short link meta', async () => {
+      const shortLinkMeta = await ShortLinkMeta.create({
+        shortLinkId,
+        tagName,
+        rawText,
+        content,
+        property,
+        name,
+      });
+
+      expect(shortLinkMeta).toBeInstanceOf(ShortLinkMeta);
+      expect(shortLinkMeta.id).toStrictEqual(expect.any(String));
+      expect(shortLinkMeta.shortLinkId).toBe(shortLinkId);
+      expect(shortLinkMeta.tagName).toBe(tagName);
+      expect(shortLinkMeta.rawText).toBe(rawText);
+      expect(shortLinkMeta.content).toBe(content);
+      expect(shortLinkMeta.property).toBe(property);
+      expect(shortLinkMeta.name).toBe(name);
+    });
+
+    it('should find some short link meta of a short link', async () => {
+      await ShortLinkMeta.create({
+        shortLinkId,
+        tagName,
+        rawText,
+        content,
+        property,
+        name,
+      });
+
+      const shortLink = await ShortLink.findByPk(shortLinkId, {
+        include: ShortLinkMeta,
+      });
+
+      expect(shortLink?.metaList).toBeInstanceOf(Array);
+      expect(shortLink?.metaList?.length).toBe(2);
     });
   });
 });

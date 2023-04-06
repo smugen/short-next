@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import logger from '@/logger';
 import type { Models, User } from '@/models';
 import SequelizeDatabase from '@/services/SequelizeDatabase';
+import UserLoader from '@/services/UserLoader';
 import UserService from '@/services/UserService';
 import { beforeAll, describe, expect, it, jest } from '@jest/globals';
 import cookie from 'cookie';
@@ -23,13 +24,20 @@ const verify = jest.fn().mockReturnValue(mockUser) as Models['User']['verify'];
 const findByPk = jest
   .fn()
   .mockReturnValue(mockUser) as Models['User']['findByPk'];
+const findAll = jest
+  .fn()
+  .mockReturnValueOnce([])
+  .mockReturnValue([mockUser]) as Models['User']['findAll'];
 
-const UserModel = { build, verify, findByPk } as Models['User'];
+const UserModel = { build, verify, findByPk, findAll } as Models['User'];
 
-const userService = new UserService({
+const db = {
   UserModel,
   models: { User: UserModel },
-} as SequelizeDatabase);
+} as SequelizeDatabase;
+
+const userLoader = new UserLoader(db);
+const userService = new UserService(db, userLoader);
 
 const setHeader = jest.fn() as NextApiResponse['setHeader'];
 const res = { setHeader } as NextApiResponse;
@@ -161,6 +169,22 @@ describe('UserService', () => {
         { path: '/' },
       );
       expect(setHeader).toHaveBeenLastCalledWith('Set-Cookie', symbol);
+    });
+  });
+
+  describe('#loadUserById', () => {
+    it('should throw UserNotFoundError', async () => {
+      await expect(userService.loadUserById(id)).rejects.toMatchInlineSnapshot(
+        `[GraphQLError: Could not resolve to a User with the id of '${id}']`,
+      );
+      expect(findAll).toHaveBeenLastCalledWith({ where: { id: [id] } });
+    });
+
+    it('should load user by id', async () => {
+      expect(await userService.loadUserById(id)).toMatchObject({
+        ...mockUser,
+      });
+      expect(findAll).toHaveBeenLastCalledWith({ where: { id: [id] } });
     });
   });
 });

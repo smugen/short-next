@@ -15,13 +15,14 @@ import {
 } from 'sequelize-typescript';
 
 import BaseModel from './BaseModel';
-import { ShortLinkView } from './ShortLinkView';
-import { User } from './User';
+import ShortLinkMeta from './ShortLinkMeta';
+import ShortLinkView from './ShortLinkView';
+import User from './User';
 
 const randomBytes = promisify(crypto.randomBytes);
 
 @Table<ShortLink>({})
-export class ShortLink extends BaseModel<ShortLink> {
+export default class ShortLink extends BaseModel<ShortLink> {
   /** short link */
   @Index({ unique: true, type: 'UNIQUE' })
   @AllowNull(false)
@@ -47,6 +48,10 @@ export class ShortLink extends BaseModel<ShortLink> {
   /** user */
   @BelongsTo(() => User)
   user?: User;
+
+  /** meta list */
+  @HasMany(() => ShortLinkMeta, 'shortLinkId')
+  metaList?: ShortLinkMeta[];
 
   /** views */
   @HasMany(() => ShortLinkView, 'shortLinkId')

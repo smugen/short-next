@@ -18,6 +18,7 @@ export default class SequelizeDatabase {
   readonly UserModel: Models['User'];
   readonly ShortLinkModel: Models['ShortLink'];
   readonly ShortLinkViewModel: Models['ShortLinkView'];
+  readonly ShortLinkMetaModel: Models['ShortLinkMeta'];
 
   constructor() {
     const uri = process.env.SEQUELIZE_URI;
@@ -40,5 +41,6 @@ export default class SequelizeDatabase {
     this.UserModel = this.models.User;
     this.ShortLinkModel = this.models.ShortLink;
     this.ShortLinkViewModel = this.models.ShortLinkView;
+    this.ShortLinkMetaModel = this.models.ShortLinkMeta;
   }
 }
