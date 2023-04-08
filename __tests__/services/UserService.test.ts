@@ -46,8 +46,7 @@ jest.spyOn(cookie, 'serialize').mockReturnValue(symbol as unknown as string);
 
 const req = {
   socket: { encrypted: true },
-  headers: { authorization: '' },
-  cookies: { [UserService.TOKEN_COOKIE_NAME]: '' },
+  headers: { authorization: '', cookie: '' },
 } as unknown as NextApiRequest;
 
 jest.spyOn(logger, 'info').mockReturnThis();
@@ -137,14 +136,14 @@ describe('UserService', () => {
 
     it('should authenticate with cookie', async () => {
       delete req.headers.authorization;
-      req.cookies[UserService.TOKEN_COOKIE_NAME] = token;
+      req.headers.cookie = `${UserService.TOKEN_COOKIE_NAME}=${token}`;
       expect(await userService.authenticate(req)).toMatchObject({
         ...mockUser,
       });
     });
 
     it('should not authenticate with invalid token', async () => {
-      req.cookies[UserService.TOKEN_COOKIE_NAME] = 'invalid';
+      req.headers.cookie = `${UserService.TOKEN_COOKIE_NAME}=invalid`;
       expect(await userService.authenticate(req)).toBeUndefined();
 
       req.headers.authorization = `Bearer invalid`;

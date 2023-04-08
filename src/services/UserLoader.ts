@@ -1,4 +1,4 @@
-import { User } from '@/models';
+import type { User } from '@/models';
 import DataLoader from 'dataloader';
 import { Inject, Service } from 'typedi';
 

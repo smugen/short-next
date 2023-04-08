@@ -13,10 +13,12 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n      mutation addUser_test($input: AddUserInput!) {\n        addUser(input: $input) {\n          password\n          user {\n            createdAt\n            deletedAt\n            id\n            name\n            updatedAt\n            username\n          }\n        }\n      }\n    ": types.AddUser_TestDocument,
-    "\n      mutation signIn_test($input: SignInInput!) {\n        signIn(input: $input) {\n          cyToken\n          user {\n            id\n            username\n          }\n        }\n      }\n    ": types.SignIn_TestDocument,
-    "\n      query me_test($token: String) {\n        me(token: $token) {\n          id\n          username\n        }\n      }\n    ": types.Me_TestDocument,
+    "\n      mutation addShortLink_test($input: AddShortLinkInput!) {\n        addShortLink(input: $input) {\n          shortLink {\n            id\n            slug\n            fullLink\n            user {\n              username\n            }\n          }\n        }\n      }\n    ": types.AddShortLink_TestDocument,
+    "\n      query myShortLinks_test {\n        me {\n          shortLinks {\n            id\n            viewCount\n            metaList {\n              id\n              shortLink {\n                id\n              }\n            }\n          }\n        }\n      }\n    ": types.MyShortLinks_TestDocument,
+    "\n      query me_test {\n        me {\n          id\n          username\n        }\n      }\n    ": types.Me_TestDocument,
     "\n      mutation signOut_test {\n        signOut\n      }\n    ": types.SignOut_TestDocument,
+    "\n  mutation addUser_test($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        createdAt\n        deletedAt\n        id\n        name\n        updatedAt\n        username\n      }\n    }\n  }\n": types.AddUser_TestDocument,
+    "\n  mutation signIn_test($input: SignInInput!) {\n    signIn(input: $input) {\n      cyToken\n      user {\n        id\n        username\n      }\n    }\n  }\n": types.SignIn_TestDocument,
     "\n  mutation addUser($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        username\n      }\n    }\n  }\n": types.AddUserDocument,
     "\n  mutation signIn($input: SignInInput!) {\n    signIn(input: $input) {\n      user {\n        id\n        name\n        username\n        createdAt\n        updatedAt\n      }\n    }\n  }\n": types.SignInDocument,
     "\n  mutation signOut {\n    signOut\n  }\n": types.SignOutDocument,
@@ -39,19 +41,27 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      mutation addUser_test($input: AddUserInput!) {\n        addUser(input: $input) {\n          password\n          user {\n            createdAt\n            deletedAt\n            id\n            name\n            updatedAt\n            username\n          }\n        }\n      }\n    "): (typeof documents)["\n      mutation addUser_test($input: AddUserInput!) {\n        addUser(input: $input) {\n          password\n          user {\n            createdAt\n            deletedAt\n            id\n            name\n            updatedAt\n            username\n          }\n        }\n      }\n    "];
+export function graphql(source: "\n      mutation addShortLink_test($input: AddShortLinkInput!) {\n        addShortLink(input: $input) {\n          shortLink {\n            id\n            slug\n            fullLink\n            user {\n              username\n            }\n          }\n        }\n      }\n    "): (typeof documents)["\n      mutation addShortLink_test($input: AddShortLinkInput!) {\n        addShortLink(input: $input) {\n          shortLink {\n            id\n            slug\n            fullLink\n            user {\n              username\n            }\n          }\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      mutation signIn_test($input: SignInInput!) {\n        signIn(input: $input) {\n          cyToken\n          user {\n            id\n            username\n          }\n        }\n      }\n    "): (typeof documents)["\n      mutation signIn_test($input: SignInInput!) {\n        signIn(input: $input) {\n          cyToken\n          user {\n            id\n            username\n          }\n        }\n      }\n    "];
+export function graphql(source: "\n      query myShortLinks_test {\n        me {\n          shortLinks {\n            id\n            viewCount\n            metaList {\n              id\n              shortLink {\n                id\n              }\n            }\n          }\n        }\n      }\n    "): (typeof documents)["\n      query myShortLinks_test {\n        me {\n          shortLinks {\n            id\n            viewCount\n            metaList {\n              id\n              shortLink {\n                id\n              }\n            }\n          }\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      query me_test($token: String) {\n        me(token: $token) {\n          id\n          username\n        }\n      }\n    "): (typeof documents)["\n      query me_test($token: String) {\n        me(token: $token) {\n          id\n          username\n        }\n      }\n    "];
+export function graphql(source: "\n      query me_test {\n        me {\n          id\n          username\n        }\n      }\n    "): (typeof documents)["\n      query me_test {\n        me {\n          id\n          username\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n      mutation signOut_test {\n        signOut\n      }\n    "): (typeof documents)["\n      mutation signOut_test {\n        signOut\n      }\n    "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation addUser_test($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        createdAt\n        deletedAt\n        id\n        name\n        updatedAt\n        username\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation addUser_test($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        createdAt\n        deletedAt\n        id\n        name\n        updatedAt\n        username\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation signIn_test($input: SignInInput!) {\n    signIn(input: $input) {\n      cyToken\n      user {\n        id\n        username\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation signIn_test($input: SignInInput!) {\n    signIn(input: $input) {\n      cyToken\n      user {\n        id\n        username\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

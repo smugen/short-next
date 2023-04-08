@@ -3,6 +3,16 @@ schema {
   mutation: Mutation
 }
 
+input AddShortLinkInput {
+  """Specify full link for the ShortLink."""
+  fullLink: String!
+}
+
+type AddShortLinkOutput {
+  """The ShortLink."""
+  shortLink: ShortLink!
+}
+
 input AddUserInput {
   """Specify name for the User."""
   name: String
@@ -36,6 +46,8 @@ scalar DateTime
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
 type Mutation {
+  """Add a new ShortLink."""
+  addShortLink(input: AddShortLinkInput!): AddShortLinkOutput
   """Add a new User."""
   addUser(input: AddUserInput!): AddUserOutput!
   """User sign-in."""
@@ -50,10 +62,53 @@ interface Node {
 
 type Query {
   """Who am I?"""
-  me(
-    """User token take precedence of Authorization header and Cookie."""
-    token: String
-  ): User
+  me: User
+}
+
+type ShortLink implements DaoNode & Node @key(fields: "id") {
+  """The DAO created at."""
+  createdAt: DateTime
+  """The DAO deleted at."""
+  deletedAt: DateTime
+  """The ShortLink full link"""
+  fullLink: String!
+  id: ID!
+  """The ShortLink meta list"""
+  metaList: [ShortLinkMeta!]!
+  """The ShortLink slug"""
+  slug: String!
+  """The DAO updated at."""
+  updatedAt: DateTime
+  """The ShortLink user"""
+  user: User!
+  """The ShortLink user id"""
+  userId: ID!
+  """The ShortLink view count"""
+  viewCount: Float!
+}
+
+type ShortLinkMeta implements DaoNode & Node @key(fields: "id") {
+  """The ShortLinkMeta content"""
+  content: String
+  """The DAO created at."""
+  createdAt: DateTime
+  """The DAO deleted at."""
+  deletedAt: DateTime
+  id: ID!
+  """The ShortLinkMeta name"""
+  name: String
+  """The ShortLinkMeta property"""
+  property: String
+  """The ShortLinkMeta raw text"""
+  rawText: String
+  """The ShortLinkMeta shortLink"""
+  shortLink: ShortLink!
+  """The ShortLinkMeta shortLink id"""
+  shortLinkId: ID!
+  """The ShortLinkMeta tag name"""
+  tagName: String!
+  """The DAO updated at."""
+  updatedAt: DateTime
 }
 
 input SignInInput {
@@ -78,6 +133,8 @@ type User implements DaoNode & Node @key(fields: "id") {
   id: ID!
   """The User name for display"""
   name: String!
+  """The User shortLinks"""
+  shortLinks: [ShortLink!]!
   """The DAO updated at."""
   updatedAt: DateTime
   """The User username"""

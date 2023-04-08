@@ -5,15 +5,24 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import Container from 'typedi';
 
 import { graphql } from '../../gql_generated';
-import { executorFactory } from './setup';
+import executorFactory, { addUser, signIn } from './setup';
 
 const db = Container.get(SequelizeDatabase);
-const executor = executorFactory();
 
 beforeAll(() => db.sequelize.sync());
 afterAll(() => db.sequelize.close());
 
 describe('UserResolver', () => {
+  const executor = executorFactory({
+    headers() {
+      return token
+        ? ({
+            authorization: `Bearer ${token}`,
+          } as { authorization: string })
+        : {};
+    },
+  });
+
   const username = 'abc@example.com';
   const password = 'password';
   let id: string;
@@ -21,22 +30,6 @@ describe('UserResolver', () => {
 
   describe('#addUser', () => {
     const name = 'name';
-
-    const addUser = graphql(/* GraphQL */ `
-      mutation addUser_test($input: AddUserInput!) {
-        addUser(input: $input) {
-          password
-          user {
-            createdAt
-            deletedAt
-            id
-            name
-            updatedAt
-            username
-          }
-        }
-      }
-    `);
 
     it('should add a user', async () => {
       const { data } = await executor({
@@ -87,18 +80,6 @@ describe('UserResolver', () => {
   });
 
   describe('#signIn', () => {
-    const signIn = graphql(/* GraphQL */ `
-      mutation signIn_test($input: SignInInput!) {
-        signIn(input: $input) {
-          cyToken
-          user {
-            id
-            username
-          }
-        }
-      }
-    `);
-
     it('should sign in', async () => {
       const { data } = await executor({
         document: signIn,
@@ -165,8 +146,8 @@ describe('UserResolver', () => {
 
   describe('#me', () => {
     const me = graphql(/* GraphQL */ `
-      query me_test($token: String) {
-        me(token: $token) {
+      query me_test {
+        me {
           id
           username
         }
@@ -176,16 +157,20 @@ describe('UserResolver', () => {
     it('should return the current user', async () => {
       const { data } = await executor({
         document: me,
-        variables: { token },
       });
 
       expect(data?.me).toMatchObject({ id, username });
     });
 
     it('should return null if not signed in', async () => {
+      const savedToken = token;
+      token = '';
+
       const { data } = await executor({
         document: me,
       });
+
+      token = savedToken;
 
       expect(data?.me).toBeNull();
     });

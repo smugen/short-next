@@ -146,6 +146,9 @@ export default class User extends BaseModel<User> implements ScryptPassword {
     return ok ? user : null;
   }
 
+  @Field(() => [ShortLink], {
+    description: 'The User shortLinks',
+  })
   @HasMany(() => ShortLink, 'userId')
   shortLinks?: ShortLink[];
 }

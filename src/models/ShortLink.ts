@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { promisify } from 'util';
 
+import GraphNode from '@/graphql/types/GraphNode';
 import type { CreationOptional } from 'sequelize';
 import { DataTypes } from 'sequelize';
 import {
@@ -13,6 +14,7 @@ import {
   Index,
   Table,
 } from 'sequelize-typescript';
+import { Directive, Field, ID, ObjectType } from 'type-graphql';
 
 import BaseModel from './BaseModel';
 import ShortLinkMeta from './ShortLinkMeta';
@@ -21,9 +23,14 @@ import User from './User';
 
 const randomBytes = promisify(crypto.randomBytes);
 
-@Table<ShortLink>({})
+@Directive(`@key(fields: "id")`)
+@ObjectType('ShortLink', { implements: [GraphNode, BaseModel] })
+@Table<ShortLink>({ modelName: 'ShortLink' })
 export default class ShortLink extends BaseModel<ShortLink> {
   /** short link */
+  @Field(() => String, {
+    description: 'The ShortLink slug',
+  })
   @Index({ unique: true, type: 'UNIQUE' })
   @AllowNull(false)
   @Column(DataTypes.STRING)
@@ -35,27 +42,45 @@ export default class ShortLink extends BaseModel<ShortLink> {
   }
 
   /** full link */
+  @Field({
+    description: 'The ShortLink full link',
+  })
   @AllowNull(false)
   @Column(DataTypes.STRING)
   fullLink!: string;
 
   /** user id */
+  @Field(() => ID, {
+    description: 'The ShortLink user id',
+  })
   @ForeignKey(() => User)
   @AllowNull(false)
   @Column(DataTypes.UUID)
   userId!: string;
 
   /** user */
+  @Field(() => User, {
+    description: 'The ShortLink user',
+  })
   @BelongsTo(() => User)
   user?: User;
 
   /** meta list */
+  @Field(() => [ShortLinkMeta], {
+    description: 'The ShortLink meta list',
+  })
   @HasMany(() => ShortLinkMeta, 'shortLinkId')
   metaList?: ShortLinkMeta[];
 
   /** views */
   @HasMany(() => ShortLinkView, 'shortLinkId')
   views?: ShortLinkView[];
+
+  /** view count */
+  @Field(() => Number, {
+    description: 'The ShortLink view count',
+  })
+  viewCount: CreationOptional<number> = 0;
 }
 
 async function genSlug(M: typeof ShortLink, lenFactor = 1): Promise<string> {

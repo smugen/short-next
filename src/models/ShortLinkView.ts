@@ -9,6 +9,7 @@ import {
 
 import BaseModel from './BaseModel';
 import ShortLink from './ShortLink';
+import type ShortLinkType from './ShortLink';
 
 @Table<ShortLinkView>({})
 export default class ShortLinkView extends BaseModel<ShortLinkView> {
@@ -20,5 +21,5 @@ export default class ShortLinkView extends BaseModel<ShortLinkView> {
 
   /** shortLink */
   @BelongsTo(() => ShortLink)
-  shortLink?: ShortLink;
+  shortLink?: ShortLinkType;
 }

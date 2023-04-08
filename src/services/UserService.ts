@@ -1,4 +1,5 @@
 import assert from 'assert';
+import type { IncomingHttpHeaders } from 'http';
 import type { TLSSocket } from 'tls';
 import { promisify } from 'util';
 
@@ -11,7 +12,7 @@ import type AddUserOutput from '@/graphql/resolvers/outputs/AddUserOutput';
 import type SignInOutput from '@/graphql/resolvers/outputs/SignInOutput';
 import logger from '@/logger';
 import type { User } from '@/models';
-import { serialize } from 'cookie';
+import { parse, serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
 import type {
   GetServerSidePropsContext,
@@ -40,7 +41,7 @@ const path = '/';
 const TOKEN_EXPIRES_IN = 28800;
 const TOKEN_TYPE = 'Bearer';
 
-type NextReq = GetServerSidePropsContext['req'] | NextApiRequest;
+type NextReq = GetServerSidePropsContext['req'] | Request;
 
 @Service()
 export default class UserService {
@@ -182,10 +183,21 @@ class TokenClaims {
   }
 }
 
-function getToken(req: NextReq): string | undefined {
-  const [type, token] = req.headers.authorization?.split(' ') ?? [];
+function getToken({ headers }: NextReq): string | undefined {
+  const authorization =
+    headers.get instanceof Function
+      ? headers.get('authorization')
+      : (headers as IncomingHttpHeaders).authorization;
+
+  const [type, token] = authorization?.split(' ') ?? [];
   if (type === TOKEN_TYPE && token && typeof token === 'string') {
     return token;
   }
-  return req.cookies[TOKEN_COOKIE_NAME];
+
+  const cookie =
+    headers.get instanceof Function
+      ? headers.get('cookie')
+      : (headers as IncomingHttpHeaders).cookie;
+
+  return (cookie && parse(cookie)[TOKEN_COOKIE_NAME]) || void 0;
 }
