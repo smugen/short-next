@@ -3,20 +3,19 @@ import { useSignIn, useSignUp } from '@/utils/authentication';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
-import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useReducer, useRef } from 'react';
+import { useContext, useEffect, useReducer, useRef } from 'react';
 import { default as DI } from 'typedi';
+
+import { SetGlobalLoadingContext } from '../_app';
 
 export const getServerSideProps: GetServerSideProps =
   async function getServerSideProps({ req }) {
@@ -33,8 +32,6 @@ export const getServerSideProps: GetServerSideProps =
 
     return { props: {} };
   };
-
-const theme = createTheme();
 
 interface PageState {
   form: 'signIn' | 'signUp';
@@ -74,41 +71,38 @@ export default function Page() {
     form: 'signIn',
     loading: false,
   });
+  const setGlobalLoading = useContext(SetGlobalLoadingContext);
+
+  useEffect(() => {
+    setGlobalLoading(state.loading);
+  }, [setGlobalLoading, state.loading]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-        open={state.loading}
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          {state.form === 'signIn' ? (
-            <SignIn {...{ ...state, dispatch }} />
-          ) : (
-            <SignUp {...{ ...state, dispatch }} />
-          )}
-        </Box>
-        <Collapse in={!!state.error}>
-          <Divider>Result</Divider>
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {state.error?.toString()}
-          </Alert>
-        </Collapse>
-      </Container>
-    </ThemeProvider>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        {state.form === 'signIn' ? (
+          <SignIn {...{ ...state, dispatch }} />
+        ) : (
+          <SignUp {...{ ...state, dispatch }} />
+        )}
+      </Box>
+      <Collapse in={!!state.error}>
+        <Divider>Result</Divider>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {state.error?.toString()}
+        </Alert>
+      </Collapse>
+    </Container>
   );
 }
 

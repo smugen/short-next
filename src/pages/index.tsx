@@ -1,3 +1,5 @@
+import MyShortLinks from '@/components/MyShortLinks';
+import type { MyShortLinksRef } from '@/components/MyShortLinks';
 import SNAppBar from '@/components/SNAppBar';
 import UserService from '@/services/UserService';
 import {
@@ -6,6 +8,7 @@ import {
   useDispatchAuthedUser,
 } from '@/utils/authentication';
 import type { GetServerSideProps } from 'next';
+import { useRef } from 'react';
 import Container from 'typedi';
 
 interface Props {
@@ -41,10 +44,20 @@ export const getServerSideProps: GetServerSideProps<Props> =
 
 export default function Page({ user }: Props) {
   useDispatchAuthedUser(user);
+  const myShortLinksRef = useRef<MyShortLinksRef>(null);
 
   return (
     <>
-      <SNAppBar />
+      <SNAppBar
+        refresh={() => myShortLinksRef.current?.refresh()}
+        add={() => myShortLinksRef.current?.add()}
+      />
+      <MyShortLinks ref={myShortLinksRef} />
     </>
   );
 }
+
+// Speed Dial
+// Drawer
+// Dialog
+// Snackbar

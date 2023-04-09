@@ -22,6 +22,8 @@ const documents = {
     "\n  mutation addUser($input: AddUserInput!) {\n    addUser(input: $input) {\n      password\n      user {\n        username\n      }\n    }\n  }\n": types.AddUserDocument,
     "\n  mutation signIn($input: SignInInput!) {\n    signIn(input: $input) {\n      user {\n        id\n        name\n        username\n        createdAt\n        updatedAt\n      }\n    }\n  }\n": types.SignInDocument,
     "\n  mutation signOut {\n    signOut\n  }\n": types.SignOutDocument,
+    "\n  query myShortLinks {\n    me {\n      shortLinks {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n": types.MyShortLinksDocument,
+    "\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n": types.AddShortLinkDocument,
 };
 
 /**
@@ -74,6 +76,14 @@ export function graphql(source: "\n  mutation signIn($input: SignInInput!) {\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation signOut {\n    signOut\n  }\n"): (typeof documents)["\n  mutation signOut {\n    signOut\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query myShortLinks {\n    me {\n      shortLinks {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"): (typeof documents)["\n  query myShortLinks {\n    me {\n      shortLinks {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

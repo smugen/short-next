@@ -3,6 +3,7 @@ import ShortLinkService from '@/services/ShortLinkService';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Script from 'next/script';
+import { useId } from 'react';
 import Container from 'typedi';
 
 /** seconds */
@@ -47,6 +48,8 @@ export const getServerSideProps: GetServerSideProps<Props> =
 export default function ShortLinkPage({
   shortLink: { fullLink, metaList },
 }: Props) {
+  const scriptId = useId();
+
   return (
     <>
       <Head>
@@ -72,7 +75,7 @@ export default function ShortLinkPage({
           <meta httpEquiv="refresh" content={`${WAIT}; url=${fullLink}`} />
         </noscript>
       </Head>
-      <Script id="window.location.replace">{`
+      <Script id={scriptId}>{`
         console.log('Redirecting to ${fullLink} in ${WAIT} seconds.');
         setTimeout(() => window.location.replace('${fullLink}'), ${WAIT} * 1000);
       `}</Script>

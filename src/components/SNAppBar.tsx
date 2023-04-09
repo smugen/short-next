@@ -1,7 +1,8 @@
 import { AuthedUserContext, useSignOut } from '@/utils/authentication';
 import stringAvatar from '@/utils/stringAvatar';
+import AddIcon from '@mui/icons-material/Add';
 import Logout from '@mui/icons-material/Logout';
-import MenuIcon from '@mui/icons-material/Menu';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Backdrop from '@mui/material/Backdrop';
@@ -16,7 +17,12 @@ import Typography from '@mui/material/Typography';
 import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
 import { useContext } from 'react';
 
-export default function SNAppBar() {
+interface Props {
+  refresh: () => void;
+  add: () => void;
+}
+
+export default function SNAppBar({ add, refresh }: Props) {
   const auth = useContext(AuthedUserContext);
   const [signOut, signOutResult] = useSignOut();
 
@@ -29,7 +35,7 @@ export default function SNAppBar() {
         <CircularProgress color="inherit" />
       </Backdrop>
       <Toolbar>
-        <IconButton
+        {/* <IconButton
           size="large"
           edge="start"
           color="inherit"
@@ -37,37 +43,55 @@ export default function SNAppBar() {
           sx={{ mr: 2 }}
         >
           <MenuIcon />
-        </IconButton>
+        </IconButton> */}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Short Links
         </Typography>
         {auth && (
-          <PopupState variant="popover" popupId="auth-popup-menu">
-            {popupState => (
-              <>
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  {...bindTrigger(popupState)}
-                >
-                  <Avatar {...stringAvatar(auth.name)} />
-                </IconButton>
-                <Menu {...bindMenu(popupState)}>
-                  <MenuItem>{`${auth.name} <${auth.username}>`}</MenuItem>
-                  <Divider />
-                  <MenuItem onClick={signOut}>
-                    <ListItemIcon>
-                      <Logout fontSize="small" />
-                    </ListItemIcon>
-                    Sign out
-                  </MenuItem>
-                </Menu>
-              </>
-            )}
-          </PopupState>
+          <>
+            <IconButton
+              size="large"
+              aria-label="add"
+              color="inherit"
+              onClick={add}
+            >
+              <AddIcon />
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="refresh"
+              color="inherit"
+              onClick={refresh}
+            >
+              <RefreshIcon />
+            </IconButton>
+            <PopupState variant="popover" popupId="auth-popup-menu">
+              {popupState => (
+                <>
+                  <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    {...bindTrigger(popupState)}
+                  >
+                    <Avatar {...stringAvatar(auth.name)} />
+                  </IconButton>
+                  <Menu {...bindMenu(popupState)}>
+                    <MenuItem>{`${auth.name} <${auth.username}>`}</MenuItem>
+                    <Divider />
+                    <MenuItem onClick={signOut}>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Sign out
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
+            </PopupState>
+          </>
         )}
       </Toolbar>
     </AppBar>

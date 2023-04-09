@@ -36,6 +36,7 @@ export default abstract class BaseModel<M extends Model = Model>
     return this.toJSON();
   }
 
+  /** primary key on the table */
   @Field(() => ID)
   @PrimaryKey
   @Column({
