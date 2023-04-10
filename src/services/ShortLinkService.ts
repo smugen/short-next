@@ -1,7 +1,9 @@
 import ResponseNotOkError from '@/graphql/resolvers/errors/ResponseNotOkError';
 import ShortLinkNotFoundError from '@/graphql/resolvers/errors/ShortLinkNotFoundError';
-import AddShortLinkInput from '@/graphql/resolvers/inputs/AddShortLinkInput';
-import AddShortLinkOutput from '@/graphql/resolvers/outputs/AddShortLinkOutput';
+import type AddShortLinkInput from '@/graphql/resolvers/inputs/AddShortLinkInput';
+import type RemoveShortLinksInput from '@/graphql/resolvers/inputs/RemoveShortLinksInput';
+import type AddShortLinkOutput from '@/graphql/resolvers/outputs/AddShortLinkOutput';
+import type RemoveShortLinksOutput from '@/graphql/resolvers/outputs/RemoveShortLinksOutput';
 import logger from '@/logger';
 import type { ShortLink, ShortLinkMeta, ShortLinkView, User } from '@/models';
 import parse, { valid } from 'node-html-parser';
@@ -58,6 +60,17 @@ export default class ShortLinkService {
     }
 
     return { shortLink };
+  }
+
+  async removeShortLinks(
+    { shortLinkIdList }: RemoveShortLinksInput,
+    { id: userId }: User,
+  ): Promise<RemoveShortLinksOutput> {
+    const removedCount = await this.db.ShortLinkModel.destroy({
+      where: { id: shortLinkIdList, userId },
+    });
+
+    return { removedCount };
   }
 
   async loadShortLinkById(id: string): Promise<ShortLink> {

@@ -50,6 +50,8 @@ type Mutation {
   addShortLink(input: AddShortLinkInput!): AddShortLinkOutput
   """Add a new User."""
   addUser(input: AddUserInput!): AddUserOutput!
+  """Remove ShortLinks."""
+  removeShortLinks(input: RemoveShortLinksInput!): RemoveShortLinksOutput
   """User sign-in."""
   signIn(input: SignInInput!): SignInOutput!
   """User sign-out."""
@@ -63,6 +65,16 @@ interface Node {
 type Query {
   """Who am I?"""
   me: User
+}
+
+input RemoveShortLinksInput {
+  """Specify ID list of ShortLinks to be remove."""
+  shortLinkIdList: [ID!]!
+}
+
+type RemoveShortLinksOutput {
+  """The number of objects that been removed."""
+  removedCount: Int!
 }
 
 type ShortLink implements DaoNode & Node @key(fields: "id") {

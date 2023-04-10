@@ -64,6 +64,8 @@ export type Mutation = {
   addShortLink?: Maybe<AddShortLinkOutput>;
   /** Add a new User. */
   addUser: AddUserOutput;
+  /** Remove ShortLinks. */
+  removeShortLinks?: Maybe<RemoveShortLinksOutput>;
   /** User sign-in. */
   signIn: SignInOutput;
   /** User sign-out. */
@@ -81,6 +83,11 @@ export type MutationAddUserArgs = {
 };
 
 
+export type MutationRemoveShortLinksArgs = {
+  input: RemoveShortLinksInput;
+};
+
+
 export type MutationSignInArgs = {
   input: SignInInput;
 };
@@ -93,6 +100,17 @@ export type Query = {
   __typename?: 'Query';
   /** Who am I? */
   me?: Maybe<User>;
+};
+
+export type RemoveShortLinksInput = {
+  /** Specify ID list of ShortLinks to be remove. */
+  shortLinkIdList: Array<Scalars['ID']>;
+};
+
+export type RemoveShortLinksOutput = {
+  __typename?: 'RemoveShortLinksOutput';
+  /** The number of objects that been removed. */
+  removedCount: Scalars['Int'];
 };
 
 export type ShortLink = DaoNode & Node & {
@@ -187,6 +205,13 @@ export type MyShortLinks_TestQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MyShortLinks_TestQuery = { __typename?: 'Query', me?: { __typename?: 'User', shortLinks: Array<{ __typename?: 'ShortLink', id: string, viewCount: number, metaList: Array<{ __typename?: 'ShortLinkMeta', id: string, shortLink: { __typename?: 'ShortLink', id: string } }> }> } | null };
 
+export type RemoveShortLinks_TestMutationVariables = Exact<{
+  input: RemoveShortLinksInput;
+}>;
+
+
+export type RemoveShortLinks_TestMutation = { __typename?: 'Mutation', removeShortLinks?: { __typename?: 'RemoveShortLinksOutput', removedCount: number } | null };
+
 export type Me_TestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -245,6 +270,7 @@ export type AddShortLinkMutation = { __typename?: 'Mutation', addShortLink?: { _
 
 export const AddShortLink_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"addShortLink_test"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddShortLinkInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addShortLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shortLink"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"fullLink"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AddShortLink_TestMutation, AddShortLink_TestMutationVariables>;
 export const MyShortLinks_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"myShortLinks_test"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shortLinks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"viewCount"}},{"kind":"Field","name":{"kind":"Name","value":"metaList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"shortLink"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<MyShortLinks_TestQuery, MyShortLinks_TestQueryVariables>;
+export const RemoveShortLinks_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeShortLinks_test"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveShortLinksInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeShortLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removedCount"}}]}}]}}]} as unknown as DocumentNode<RemoveShortLinks_TestMutation, RemoveShortLinks_TestMutationVariables>;
 export const Me_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"me_test"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]} as unknown as DocumentNode<Me_TestQuery, Me_TestQueryVariables>;
 export const SignOut_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"signOut_test"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signOut"}}]}}]} as unknown as DocumentNode<SignOut_TestMutation, SignOut_TestMutationVariables>;
 export const AddUser_TestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"addUser_test"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<AddUser_TestMutation, AddUser_TestMutationVariables>;

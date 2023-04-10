@@ -30,6 +30,8 @@ describe('ShortLinkResolver', () => {
   const username = `${crypto.randomUUID()}@example.com`;
   const password = 'password';
   let token: string;
+  let shortLinkIds: string[];
+  let shortLinkCount: number;
 
   beforeAll(async () => {
     const result = await executor({
@@ -132,6 +134,45 @@ describe('ShortLinkResolver', () => {
         shortLink: {
           id: data?.me?.shortLinks?.[0].id,
         },
+      });
+
+      assert(data?.me?.shortLinks);
+      shortLinkIds = data?.me?.shortLinks?.map(sl => sl.id);
+      shortLinkCount = data?.me?.shortLinks?.length;
+    });
+  });
+
+  describe('#removeShortLinks', () => {
+    const removeShortLinks = graphql(/* GraphQL */ `
+      mutation removeShortLinks_test($input: RemoveShortLinksInput!) {
+        removeShortLinks(input: $input) {
+          removedCount
+        }
+      }
+    `);
+
+    it('should return null if not signed in', async () => {
+      const savedToken = token;
+      token = '';
+
+      const { data } = await executor({
+        document: removeShortLinks,
+        variables: { input: { shortLinkIdList: shortLinkIds } },
+      });
+
+      token = savedToken;
+
+      expect(data?.removeShortLinks).toBeNull();
+    });
+
+    it('should remove shortLinks', async () => {
+      const { data } = await executor({
+        document: removeShortLinks,
+        variables: { input: { shortLinkIdList: shortLinkIds } },
+      });
+
+      expect(data?.removeShortLinks).toMatchObject({
+        removedCount: shortLinkCount,
       });
     });
   });

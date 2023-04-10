@@ -17,7 +17,9 @@ import {
 import { Inject, Service } from 'typedi';
 
 import AddShortLinkInput from './inputs/AddShortLinkInput';
+import RemoveShortLinksInput from './inputs/RemoveShortLinksInput';
 import AddShortLinkOutput from './outputs/AddShortLinkOutput';
+import RemoveShortLinksOutput from './outputs/RemoveShortLinksOutput';
 import type { GraphqlContext } from '..';
 
 @Service()
@@ -41,6 +43,19 @@ export default class ShortLinkResolver implements ResolverInterface<ShortLink> {
   ): Promise<AddShortLinkOutput> {
     assert(user, 'User is not authenticated');
     return this.shortLinkService.addShortLink(input, user);
+  }
+
+  @Authorized()
+  @Mutation(() => RemoveShortLinksOutput, {
+    description: 'Remove ShortLinks.',
+    nullable: true,
+  })
+  removeShortLinks(
+    @Arg('input') input: RemoveShortLinksInput,
+    @Ctx('user') user: GraphqlContext['user'],
+  ): Promise<RemoveShortLinksOutput> {
+    assert(user, 'User is not authenticated');
+    return this.shortLinkService.removeShortLinks(input, user);
   }
 
   @FieldResolver()
