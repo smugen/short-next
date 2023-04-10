@@ -2,6 +2,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 `short-next --typescript --eslint --src-dir`
 
+## CodeSandbox
+
+https://codesandbox.io/p/github/smugen/short-next/review-sandbox
+
 ## Getting Started
 
 First, install dependencies:

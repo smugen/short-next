@@ -22,7 +22,7 @@ tags: HR
 - [x] 後端使用任一套 [ORM](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) 搭配任一套 [RDBMS](https://en.wikipedia.org/wiki/Relational_database)
 - [x] 整個 React App 使用 [Functional Component](https://reactjs.org/docs/components-and-props.html#function-and-class-components)
 - [x] 使用套件檢查程式碼風格 (例如：[JavaScript Standard](https://standardjs.com/)、[ESLint](https://eslint.org/))
-- [ ] 專案需要能被公開瀏覽使用 (例如使用 [Heroku](https://www.heroku.com/))
+- [x] 專案需要能被公開瀏覽使用 (例如使用 [Heroku](https://www.heroku.com/))
 - [x] [單元測試](https://en.wikipedia.org/wiki/Unit_testing)
 - [x] [E2E 測試](https://www.browserstack.com/guide/end-to-end-testing)
 - [x] 開發時全程使用 [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
