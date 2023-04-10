@@ -1,4 +1,4 @@
-import { ShortLinkListContext } from '@/utils/shortLink';
+import { ShortLinkItem, ShortLinkListContext } from '@/utils/shortLink';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Avatar from '@mui/material/Avatar';
@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { useContext, useMemo } from 'react';
 
 interface Props {
-  remove: (shortLinkIdList: string[]) => void;
+  remove: (shortLinks: ShortLinkItem[]) => void;
 }
 
 export default function ShortLinkList({ remove }: Props) {
@@ -33,14 +33,18 @@ export default function ShortLinkList({ remove }: Props) {
 
   return (
     <List>
-      {shortLinks.map(({ id, viewCount, slug, fullLink }) => {
+      {shortLinks.map(shortLink => {
+        const { id, viewCount, slug, fullLink } = shortLink;
         const url = new URL(`/${slug}`, window.location.origin);
 
         return (
           <ListItem
             key={id}
             secondaryAction={
-              <IconButton aria-label="delete" onClick={() => remove([id])}>
+              <IconButton
+                aria-label="delete"
+                onClick={() => remove([shortLink])}
+              >
                 <DeleteIcon />
               </IconButton>
             }

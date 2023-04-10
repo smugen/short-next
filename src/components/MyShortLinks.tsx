@@ -1,4 +1,6 @@
+import { SetGlobalLoadingContext } from '@/pages/_app';
 import {
+  ShortLinkItem,
   ShortLinkListContext,
   useMyShortLinks,
   useRemoveShortLinks,
@@ -7,9 +9,10 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import LinearProgress from '@mui/material/LinearProgress';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useContext, useImperativeHandle, useState } from 'react';
 
 import AddShortLinkDialog from './AddShortLinkDialog';
+import RemoveShortLinkDialog from './RemoveShortLinkDialog';
 import ShortLinkList from './ShortLinkList';
 
 export interface MyShortLinksRef {
@@ -21,6 +24,8 @@ const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
   const [result, refresh] = useMyShortLinks();
   const [removeShortLinks, removeShortLinksResult] = useRemoveShortLinks();
   const [openAdd, setOpenAdd] = useState(false);
+  const [itemsToRemove, setItemsToRemove] = useState<ShortLinkItem[]>();
+  const setGlobalLoading = useContext(SetGlobalLoadingContext);
 
   useImperativeHandle(ref, () => ({ refresh, add }), [refresh]);
 
@@ -33,8 +38,19 @@ const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
     setOpenAdd(false);
   }
 
-  function remove(shortLinkIdList: string[]) {
-    removeShortLinks({ shortLinkIdList }).then(() => refresh());
+  function remove(shortLinks: ShortLinkItem[]) {
+    setItemsToRemove(shortLinks);
+  }
+
+  async function closeRemove(shortLinkIdList?: string[]) {
+    if (!shortLinkIdList) {
+      return setItemsToRemove(void 0);
+    }
+    setGlobalLoading(true);
+    await removeShortLinks({ shortLinkIdList });
+    setItemsToRemove(void 0);
+    setGlobalLoading(false);
+    refresh();
   }
 
   const { shortLinks, error, fetching, stale } = result;
@@ -57,6 +73,7 @@ const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
         </Collapse>
       </Box>
       <AddShortLinkDialog isOpen={openAdd} onClose={closeAdd} />
+      <RemoveShortLinkDialog items={itemsToRemove} onConfirm={closeRemove} />
       <ShortLinkList remove={remove} />
     </ShortLinkListContext.Provider>
   );

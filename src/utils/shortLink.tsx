@@ -61,7 +61,9 @@ export function useAddShortLink() {
 
   const shortLinkFromAddShortLinkResult = useCallback(
     function shortLinkFromAddShortLinkResult(
-      result: Omit<typeof addShortLinkResult, 'fetching'>,
+      result:
+        | typeof addShortLinkResult
+        | Omit<typeof addShortLinkResult, 'fetching'>,
     ) {
       const { shortLink } = result.data?.addShortLink ?? {};
       return {
@@ -70,6 +72,8 @@ export function useAddShortLink() {
           ...shortLink,
           createdAt: new Date(shortLink.createdAt),
         },
+      } as typeof addShortLinkResult & {
+        shortLink: ShortLinkItem | undefined;
       };
     },
     [],
