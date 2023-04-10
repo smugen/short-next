@@ -1,4 +1,8 @@
-import { ShortLinkListContext, useMyShortLinks } from '@/utils/shortLink';
+import {
+  ShortLinkListContext,
+  useMyShortLinks,
+  useRemoveShortLinks,
+} from '@/utils/shortLink';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -15,6 +19,7 @@ export interface MyShortLinksRef {
 
 const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
   const [result, refresh] = useMyShortLinks();
+  const [removeShortLinks, removeShortLinksResult] = useRemoveShortLinks();
   const [openAdd, setOpenAdd] = useState(false);
 
   useImperativeHandle(ref, () => ({ refresh, add }), [refresh]);
@@ -28,6 +33,10 @@ const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
     setOpenAdd(false);
   }
 
+  function remove(shortLinkIdList: string[]) {
+    removeShortLinks({ shortLinkIdList }).then(() => refresh());
+  }
+
   const { shortLinks, error, fetching, stale } = result;
 
   return (
@@ -38,12 +47,17 @@ const MyShortLinks = forwardRef<MyShortLinksRef>(function MyShortLinks(_, ref) {
             {error?.toString()}
           </Alert>
         </Collapse>
+        <Collapse in={!!removeShortLinksResult.error}>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {removeShortLinksResult.error?.toString()}
+          </Alert>
+        </Collapse>
         <Collapse in={fetching || stale}>
           <LinearProgress />
         </Collapse>
       </Box>
       <AddShortLinkDialog isOpen={openAdd} onClose={closeAdd} />
-      <ShortLinkList />
+      <ShortLinkList remove={remove} />
     </ShortLinkListContext.Provider>
   );
 });

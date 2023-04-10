@@ -25,6 +25,7 @@ const documents = {
     "\n  mutation signOut {\n    signOut\n  }\n": types.SignOutDocument,
     "\n  query myShortLinks {\n    me {\n      shortLinks {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n": types.MyShortLinksDocument,
     "\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n": types.AddShortLinkDocument,
+    "\n  mutation removeShortLinks($input: RemoveShortLinksInput!) {\n    removeShortLinks(input: $input) {\n      removedCount\n    }\n  }\n": types.RemoveShortLinksDocument,
 };
 
 /**
@@ -89,6 +90,10 @@ export function graphql(source: "\n  query myShortLinks {\n    me {\n      short
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation addShortLink($input: AddShortLinkInput!) {\n    addShortLink(input: $input) {\n      shortLink {\n        id\n        slug\n        fullLink\n        viewCount\n        createdAt\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation removeShortLinks($input: RemoveShortLinksInput!) {\n    removeShortLinks(input: $input) {\n      removedCount\n    }\n  }\n"): (typeof documents)["\n  mutation removeShortLinks($input: RemoveShortLinksInput!) {\n    removeShortLinks(input: $input) {\n      removedCount\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

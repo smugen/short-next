@@ -65,14 +65,14 @@ export function useAddShortLink() {
     ) {
       const { shortLink } = result.data?.addShortLink ?? {};
       return {
-        ...addShortLinkResult,
+        ...result,
         shortLink: shortLink && {
           ...shortLink,
           createdAt: new Date(shortLink.createdAt),
         },
       };
     },
-    [addShortLinkResult],
+    [],
   );
 
   const addShortLink = useCallback(
@@ -91,5 +91,49 @@ export function useAddShortLink() {
   return [
     addShortLink,
     shortLinkFromAddShortLinkResult(addShortLinkResult),
+  ] as const;
+}
+
+const removeShortLinksMutation = graphql(/* GraphQL */ `
+  mutation removeShortLinks($input: RemoveShortLinksInput!) {
+    removeShortLinks(input: $input) {
+      removedCount
+    }
+  }
+`);
+
+export function useRemoveShortLinks() {
+  const [removeShortLinksResult, doRemoveShortLinks] = useMutation(
+    removeShortLinksMutation,
+  );
+
+  const removedCountFromRemoveShortLinksResult = useCallback(
+    function removedCountFromRemoveShortLinksResult(
+      result: Omit<typeof removeShortLinksResult, 'fetching'>,
+    ) {
+      return {
+        ...result,
+        removedCount: result.data?.removeShortLinks?.removedCount,
+      };
+    },
+    [],
+  );
+
+  const removeShortLinks = useCallback(
+    async function removeShortLinks(
+      input: Parameters<typeof doRemoveShortLinks>[0]['input'],
+    ) {
+      const result = await doRemoveShortLinks(
+        { input },
+        { requestPolicy: 'network-only' },
+      );
+      return removedCountFromRemoveShortLinksResult(result);
+    },
+    [doRemoveShortLinks, removedCountFromRemoveShortLinksResult],
+  );
+
+  return [
+    removeShortLinks,
+    removedCountFromRemoveShortLinksResult(removeShortLinksResult),
   ] as const;
 }
