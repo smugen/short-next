@@ -10,7 +10,7 @@ tags: HR
 
 - [x] 專案需要使用 [Git](https://git-scm.com/) 管理專案，並公開至 [GitHub](https://github.com/)
 - [x] Git commit 訊息需符合 [Conventional Commits](https://www.conventionalcommits.org/zh-hant/v1.0.0/)，並使用英文撰寫
-- [ ] 專案須包含 [`README.md`](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-readmes)，其中描述專案的安裝、建置、使用，包含的功能與操作方式
+- [x] 專案須包含 [`README.md`](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-readmes)，其中描述專案的安裝、建置、使用，包含的功能與操作方式
 - [x] 前端使用 [React.js](https://zh-hant.reactjs.org/) 16 以上實作整個頁面與元件
 - [x] 後端使用 [Node.js](https://nodejs.org/en/) 14 以上
 - [x] 使用者可以填入一段網址，會產生一段短網址
@@ -32,9 +32,12 @@ tags: HR
 
 - [x] 需要驗證網址有效
 - [x] 使用者可以使用密碼註冊、登入、登出
-- [ ] 使用者可以新增、建立、更新、刪除多個短網址
+- [x] 使用者可以新增、建立、更新、刪除多個短網址
+  - [x] 新增、建立、刪除
+  - [ ] 更新
 - [ ] 短網址重新導向的過程使用快取 (可暫時避免向資料庫查詢)
 - [x] 使用者可以知道短網址瀏覽次數
+  - [x] 獨立紀錄每次瀏覽的時間，且保留可紀錄更多參數欄位，後續可做資料視覺化
 - [ ] 服務會避免短網址重複重導向到相同網址
 - [x] 從短網址拿到原始網址的 [Open Graph Metadata](https://ogp.me/) （標題、描述、圖片）
 - [ ] 使用者可以自訂 [Open Graph Metadata](https://ogp.me/)（標題、描述、圖片）
