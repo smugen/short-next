@@ -51,6 +51,9 @@ export default function Page({ user }: Props) {
       <SNAppBar
         refresh={() => myShortLinksRef.current?.refresh()}
         add={() => myShortLinksRef.current?.add()}
+        toggleSelectRemove={() =>
+          myShortLinksRef.current?.toggleSelectRemove() ?? false
+        }
       />
       <MyShortLinks ref={myShortLinksRef} />
     </>

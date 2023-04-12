@@ -1,6 +1,8 @@
 import { AuthedUserContext, useSignOut } from '@/utils/authentication';
 import stringAvatar from '@/utils/stringAvatar';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Logout from '@mui/icons-material/Logout';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AppBar from '@mui/material/AppBar';
@@ -15,16 +17,18 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 interface Props {
   refresh: () => void;
   add: () => void;
+  toggleSelectRemove: () => boolean;
 }
 
-export default function SNAppBar({ add, refresh }: Props) {
+export default function SNAppBar({ add, refresh, toggleSelectRemove }: Props) {
   const auth = useContext(AuthedUserContext);
   const [signOut, signOutResult] = useSignOut();
+  const [deleteMode, setDeleteMode] = useState(false);
 
   return (
     <AppBar position="static">
@@ -56,6 +60,14 @@ export default function SNAppBar({ add, refresh }: Props) {
               onClick={add}
             >
               <AddIcon />
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="select-remove"
+              color="inherit"
+              onClick={() => setDeleteMode(toggleSelectRemove())}
+            >
+              {deleteMode ? <DeleteForeverIcon /> : <DeleteSweepIcon />}
             </IconButton>
             <IconButton
               size="large"
