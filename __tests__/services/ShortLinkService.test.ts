@@ -274,12 +274,10 @@ const findOne = jest
 
     describe('#getShortLinkBySlug', () => {
       it('should get shortLink by slug', async () => {
-        expect(await shortLinkService.getShortLinkBySlug(slug, false)).toBe(
-          null,
-        );
+        expect(await shortLinkService.getShortLinkBySlug(slug)).toBe(null);
         expect(findOne).toHaveBeenLastCalledWith({
           where: { slug },
-          include: void 0,
+          include: ShortLinkMetaModel,
         });
 
         expect(await shortLinkService.getShortLinkBySlug(slug)).toMatchObject({

@@ -6,6 +6,7 @@ import type AddShortLinkOutput from '@/graphql/resolvers/outputs/AddShortLinkOut
 import type RemoveShortLinksOutput from '@/graphql/resolvers/outputs/RemoveShortLinksOutput';
 import logger from '@/logger';
 import type { ShortLink, ShortLinkMeta, ShortLinkView, User } from '@/models';
+import { LRUCache } from 'lru-cache';
 import parse, { valid } from 'node-html-parser';
 import { Inject, Service } from 'typedi';
 
@@ -14,9 +15,14 @@ import ShortLinkLoader from './ShortLinkLoader';
 import ShortLinkMetasByShortLinkIdLoader from './ShortLinkMetasByShortLinkIdLoader';
 import ShortLinksByUserIdLoader from './ShortLinksByUserIdLoader';
 
+const MAX_CACHE_SIZE = 500;
+const CACHE_TTL = 1000 * 60;
+
 @Service()
 export default class ShortLinkService {
   static readonly parseMetaFromHtml = parseMetaFromHtml;
+
+  private readonly cache: LRUCache<ShortLink['slug'], ShortLink>;
 
   constructor(
     @Inject(() => SequelizeDatabase)
@@ -27,7 +33,51 @@ export default class ShortLinkService {
     private readonly shortLinksByUserIdLoader: ShortLinksByUserIdLoader,
     @Inject(() => ShortLinkMetasByShortLinkIdLoader)
     private readonly shortLinkMetasByShortLinkIdLoader: ShortLinkMetasByShortLinkIdLoader,
-  ) {}
+  ) {
+    this.cache = new LRUCache({
+      max: MAX_CACHE_SIZE,
+      ttl: CACHE_TTL,
+      fetchMethod: this.#fetchMethod.bind(this),
+      dispose: this.#dispose.bind(this),
+    });
+  }
+
+  readonly #fetchMethod: NonNullable<typeof this.cache.fetchMethod> =
+    async function fetchMethod(
+      this: ShortLinkService,
+      key,
+      staleValue,
+      { signal, options, context },
+    ) {
+      logger.debug('fetchMethod', {
+        key,
+        staleValue,
+        options,
+        context,
+        module: module.id,
+      });
+
+      const shortLink = await this.db.ShortLinkModel.findOne({
+        where: { slug: key },
+        include: this.db.ShortLinkMetaModel,
+      });
+
+      return (!signal.aborted && shortLink) || void 0;
+    };
+
+  readonly #dispose: NonNullable<typeof this.cache.dispose> = function dispose(
+    this: ShortLinkService,
+    value,
+    key,
+    reason,
+  ) {
+    logger.debug('dispose', {
+      value,
+      key,
+      reason,
+      module: module.id,
+    });
+  };
 
   async addShortLink(
     { fullLink }: AddShortLinkInput,
@@ -81,16 +131,8 @@ export default class ShortLinkService {
     return shortLink;
   }
 
-  getShortLinkBySlug(
-    slug: string,
-    includeMetas = true,
-  ): Promise<ShortLink | null> {
-    const include = includeMetas ? this.db.ShortLinkMetaModel : void 0;
-
-    return this.db.ShortLinkModel.findOne({
-      where: { slug },
-      include,
-    });
+  async getShortLinkBySlug(slug: string): Promise<ShortLink | null> {
+    return (await this.cache.fetch(slug)) ?? null;
   }
 
   recordViewOfShortLink({ id }: ShortLink): Promise<ShortLinkView> {

@@ -25,7 +25,9 @@ export default class SequelizeDatabase {
     assert(uri && uri.length, 'SEQUELIZE_URI is not defined');
 
     this.sequelize = new Sequelize(uri, {
-      logging: logger.debug.bind(logger),
+      logging: process.env.OMIT_SEQUELIZE_LOGGING
+        ? void 0
+        : logger.debug.bind(logger),
 
       models,
 
