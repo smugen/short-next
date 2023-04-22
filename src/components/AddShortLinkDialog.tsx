@@ -25,7 +25,9 @@ export default function AddShortLinkDialog({ isOpen, onClose }: Props) {
   function add() {
     const fullLink = inputRef.current?.value;
     if (fullLink) {
-      addShortLink({ fullLink }).then(() => onClose(true));
+      addShortLink({ fullLink }).then(
+        res => res.data && !res.error && onClose(true),
+      );
     }
   }
 

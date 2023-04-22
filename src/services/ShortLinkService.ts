@@ -1,4 +1,4 @@
-import ResponseNotOkError from '@/graphql/resolvers/errors/ResponseNotOkError';
+import FullLinkNotOkError from '@/graphql/resolvers/errors/FullLinkNotOkError';
 import ShortLinkNotFoundError from '@/graphql/resolvers/errors/ShortLinkNotFoundError';
 import type AddShortLinkInput from '@/graphql/resolvers/inputs/AddShortLinkInput';
 import type RemoveShortLinksInput from '@/graphql/resolvers/inputs/RemoveShortLinksInput';
@@ -83,10 +83,20 @@ export default class ShortLinkService {
     { fullLink }: AddShortLinkInput,
     { id: userId }: User,
   ): Promise<AddShortLinkOutput> {
-    const url = new URL(fullLink);
-    const res = await fetch(url);
+    const TAG = 'addShortLink';
+    let url: URL;
+    let res: Response;
+
+    try {
+      url = new URL(fullLink);
+      res = await fetch(url);
+    } catch (error) {
+      logger.warn(TAG, { error, module: module.id });
+      throw new FullLinkNotOkError(fullLink, new Error('' + error));
+    }
+
     if (!res.ok) {
-      throw new ResponseNotOkError(url, res);
+      throw new FullLinkNotOkError(url, res);
     }
 
     const shortLink = await this.db.ShortLinkModel.create({
@@ -106,7 +116,7 @@ export default class ShortLinkService {
         );
       }
     } catch (error) {
-      logger.warn('addShortLink', { error, module: module.id });
+      logger.warn(TAG, { error, module: module.id });
     }
 
     return { shortLink };
